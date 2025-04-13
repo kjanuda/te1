@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Select from 'react-select';
 
 // Generate time ranges like "7:30 AM - 8:10 AM"
 const timeRanges = () => {
@@ -44,6 +45,13 @@ const Profile = () => {
       thursday: '',
       friday: '',
     },
+    weekdays: {
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+      friday: false,
+    },
     robot: false,
   });
 
@@ -66,6 +74,16 @@ const Profile = () => {
     }
   };
 
+  const handleToggleDay = (day) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      weekdays: {
+        ...prevData.weekdays,
+        [day]: !prevData.weekdays[day],
+      },
+    }));
+  };
+
   const validate = () => {
     const newErrors = {};
     if (!formData.nic) newErrors.nic = 'NIC is required.';
@@ -73,9 +91,18 @@ const Profile = () => {
     if (!formData.gender) newErrors.gender = 'Please select a gender.';
     if (!formData.subject) newErrors.subject = 'Please select a subject.';
     if (!formData.robot) newErrors.robot = 'Please confirm you are not a robot.';
-    for (const day in formData.time) {
-      if (!formData.time[day]) newErrors[day] = `Please select time for ${day}`;
+
+    const selectedDays = Object.values(formData.weekdays).filter(Boolean);
+    if (selectedDays.length === 0) {
+      newErrors.weekdays = 'Please select at least one weekday.';
     }
+
+    for (const day in formData.time) {
+      if (formData.weekdays[day] && !formData.time[day]) {
+        newErrors[day] = `Please select time for ${day}`;
+      }
+    }
+
     return newErrors;
   };
 
@@ -150,26 +177,49 @@ const Profile = () => {
           {errors.subject && <p className="text-red-500 text-sm mt-1">{errors.subject}</p>}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Object.keys(formData.time).map((day) => (
-            <div key={day}>
-              <label className="block text-gray-700 font-semibold capitalize">{day}</label>
-              <select
-                name={day}
-                value={formData.time[day]}
-                onChange={handleChange}
-                className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">Select Available Weekdays</label>
+          <div className="flex flex-wrap gap-2">
+            {Object.keys(formData.weekdays).map((day) => (
+              <button
+                key={day}
+                type="button"
+                onClick={() => handleToggleDay(day)}
+                className={`px-4 py-2 rounded-full capitalize transition ${
+                  formData.weekdays[day]
+                    ? 'bg-cyan-500 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                }`}
               >
-                <option value="">Select Time</option>
-                {times.map((timeRange) => (
-                  <option key={timeRange} value={timeRange}>
-                    {timeRange}
-                  </option>
-                ))}
-              </select>
-              {errors[day] && <p className="text-red-500 text-sm mt-1">{errors[day]}</p>}
-            </div>
-          ))}
+                {day}
+              </button>
+            ))}
+          </div>
+          {errors.weekdays && <p className="text-red-500 text-sm mt-2">{errors.weekdays}</p>}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {Object.keys(formData.time).map((day) =>
+            formData.weekdays[day] ? (
+              <div key={day}>
+                <label className="block text-gray-700 font-semibold capitalize">{day} Time</label>
+                <select
+                  name={day}
+                  value={formData.time[day]}
+                  onChange={handleChange}
+                  className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="">Select Time</option>
+                  {times.map((timeRange) => (
+                    <option key={timeRange} value={timeRange}>
+                      {timeRange}
+                    </option>
+                  ))}
+                </select>
+                {errors[day] && <p className="text-red-500 text-sm mt-1">{errors[day]}</p>}
+              </div>
+            ) : null
+          )}
         </div>
 
         <div className="flex items-center space-x-3">

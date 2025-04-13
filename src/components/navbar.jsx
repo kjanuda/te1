@@ -41,6 +41,7 @@ const Navbar = () => {
         <Link to="/" className="hover:text-orange-600 transition duration-200">Home</Link>
         <Link to="/attendance" className="hover:text-orange-600 transition duration-200">Attendance</Link>
         <Link to="/about" className="hover:text-orange-600 transition duration-200">About</Link>
+        <Link to="/Dashboard" className="hover:text-orange-600 transition duration-200">Dashboard</Link>
         
       </div>
 

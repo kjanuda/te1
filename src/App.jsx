@@ -9,7 +9,8 @@ import Preloader from './components/Preloader';
 import Login from './components/Logging';
 import Signin from './components/Signin';
 import Register from './components/Register';
-import Profile from './components/Profile';
+import Profile from './components/profile';
+import Dashboard from './components/Dashboard';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,6 +40,7 @@ function App() {
             <Route path="/signin" element={<Signin onLogin={handleLogin} />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/Dashboard" element={<Dashboard />} />
           </Routes>
         </div>
       </div>
