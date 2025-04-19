@@ -11,6 +11,7 @@ import Signin from './components/Signin';
 import Register from './components/Register';
 import Profile from './components/profile';
 import Dashboard from './components/Dashboard';
+import NoticeBoard from './components/NoticeBoard';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +42,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/register" element={<Register />} />
             <Route path="/Dashboard" element={<Dashboard />} />
+            <Route path="/NoticeBoard" element={<NoticeBoard />} />
           </Routes>
         </div>
       </div>
