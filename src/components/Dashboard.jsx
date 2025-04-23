@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/useAuthStore';
 import { Calendar, Clock, Users, BookOpen, CheckSquare, Settings, Bell, LogOut } from 'lucide-react';
+import Navbar from './navbar';
 
 const Dashboard = () => {
   const { user, logout } = useAuthStore();
@@ -29,6 +30,8 @@ const Dashboard = () => {
   });
 
   return (
+    <div>
+    <Navbar/>
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <motion.div
@@ -284,6 +287,7 @@ const Dashboard = () => {
           </motion.div>
         )}
       </div>
+    </div>
     </div>
   );
 };

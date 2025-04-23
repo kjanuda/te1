@@ -11,7 +11,7 @@ import {
   LogOut, 
   User
 } from 'lucide-react';
-import useAuthStore from '../store/useAuthStore';
+import {useAuthStore} from '../store/useAuthStore';
 
 const Navbar = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -127,7 +127,7 @@ const Navbar = () => {
             </div>
 
             {/* User Menu */}
-            {username ? (
+            { !username ? (
               <div className="flex items-center gap-1">
                 <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
                   <User className="w-4 h-4" />

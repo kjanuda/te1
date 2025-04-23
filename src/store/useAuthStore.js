@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
+import toast from "react-hot-toast";
+
 
 const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/api/auth" : "/api/auth";
 
@@ -74,14 +76,16 @@ export const useAuthStore = create((set) => ({
 		try {
 			const response = await axios.post(`${API_URL}/forgot-password`, { email });
 			set({ message: response.data.message, isLoading: false });
+			toast.success(response.data.message); // Optional: success toast
 		} catch (error) {
-			set({
-				isLoading: false,
-				error: error.response.data.message || "Error sending reset password email",
-			});
-			throw error;
-		}
-	},
+			const message =
+			  error.response?.data?.message || "Error sending reset password email";
+			toast.error(message); // Optional: toast the error
+			return { success: false, message };
+		  } finally {
+			set({ isLoading: false });
+		  }
+		},
 	resetPassword: async (token, password) => {
 		set({ isLoading: true, error: null });
 		try {

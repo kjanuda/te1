@@ -8,6 +8,7 @@ const sender = { name: "Attendence System", address: process.env.MAIL_USER };
 
 export const sendVerificationEmail = async (email, verificationToken) => {
 	const recipients = [{ name: "", address: email }];
+	
 	try {
 		const response = await sendEmail({
             sender,
@@ -16,7 +17,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
             message: VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", verificationToken),
           });
 
-		console.log("Email sent successfully", response);
+		  console.log("✅ Email sent successfully:", response);
 	} catch (error) {
 		console.error(`Error sending verification`, error);
 
@@ -51,10 +52,10 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
 
 	try {
 		await  sendEmail({
-			from: sender,
-			to: recipients,
+			sender,
+			recipients,
 			subject: "Reset your password",
-			html: PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}", resetURL),
+			message: PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}", resetURL),
 			category: "Password Reset",
 		});
 	} catch (error) {
@@ -65,14 +66,14 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
 };
 
 export const sendResetSuccessEmail = async (email) => {
-	const recipient = [{ email }];
+	const recipients = [{ address: email }];
 
 	try {
 		const response =  await sendEmail({
-			from: sender,
-			to: recipient,
+			sender,
+			recipients,
 			subject: "Password Reset Successful",
-			html: PASSWORD_RESET_SUCCESS_TEMPLATE,
+			message: PASSWORD_RESET_SUCCESS_TEMPLATE,
 			category: "Password Reset",
 		});
 
