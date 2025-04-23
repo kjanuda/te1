@@ -1,116 +1,133 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import useAuthStore from '../store/useAuthStore'; // adjust path as needed
-import Profile from './Profile';
+import { motion } from "framer-motion";
+import Input from "../components/Input";
+import { Loader, Lock, Mail, User } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
+import { useAuthStore } from "../store/useAuthStore";
 
+const SignUpPage = () => {
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [formError, setFormError] = useState("");
+	const navigate = useNavigate();
 
-const Signin = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
-  
+	
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+	const { signup, error, isLoading } = useAuthStore();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+	const handleSignUp = async (e) => {
+		e.preventDefault();
 
-    const { email, password } = formData;
+		if (!name || !email || !password || !confirmPassword) {
+			setFormError("Please fill out all fields.");
+			return;
+		}
 
-    if (!email || !password) {
-      setError('Both fields are required.');
-      return;
-    }
+		if (password !== confirmPassword) {
+			
+			setFormError("Passwords do not match");
+			return;
+		}
 
-    // Simulate successful login
-     // Save user to state
+		
+		setFormError("");
 
-    setIsLoggedIn(true);
-    setTimeout(() => {
-       
-      navigate('/profile'); // Replace with your actual home/dashboard route
+		try {
+			await signup(email, password, name);
+			navigate("/verify-email");
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-    }, 3000);
-  };
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.5 }}
+			className='max-w-md w-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl 
+			overflow-hidden'
+		>
+			<div className='p-8'>
+				<h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r from-blue-900 to-indigo-900 text-transparent bg-clip-text'>
+					Create Account
+				</h2>
 
-  if (isLoggedIn) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-green-50">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="bg-white p-8 rounded-xl shadow-md w-full max-w-md text-center"
-        >
-          <motion.h2
-            className="text-2xl font-bold text-green-600 mb-4"
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.5, type: "spring" }}
-          >
-            
-            Login Successful!
-          </motion.h2>
-          <motion.p
-            className="text-lg text-gray-600 mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            Redirecting to Home...
-          </motion.p>
-          <motion.div
-            className="animate-spin h-12 w-12 rounded-full border-4 border-green-500 border-t-transparent"
-            transition={{ repeat: Infinity, duration: 1 }}
-          />
-        </motion.div>
-      </div>
-    );
-  }
+				<form onSubmit={handleSignUp}>
+					<Input
+						icon={User}
+						type='text'
+						placeholder='Full Name'
+						value={name}
+						onChange={(e) => {
+							setName(e.target.value);
+							setFormError("");
+						}}
+					/>
+					<Input
+						icon={Mail}
+						type='email'
+						placeholder='Email Address'
+						value={email}
+						onChange={(e) => {
+							setEmail(e.target.value);
+							setFormError("");
+						}}
+					/>
+					<Input
+						icon={Lock}
+						type='password'
+						placeholder='Password'
+						value={password}
+						onChange={(e) => {
+							setPassword(e.target.value);
+							setFormError("");
+						}}
+					/>
+					<Input
+						icon={Lock}
+						type="password"
+						placeholder="Confirm Password"
+						value={confirmPassword}
+						onChange={(e) => {
+							setConfirmPassword(e.target.value);
+							setFormError("");
+						}}
+					/>
+					
 
-  return (
-    <div className="flex items-center justify-center h-screen bg-green-50 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        className="bg-white p-8 rounded-xl shadow-md w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold text-green-600 mb-4 text-center">Login</h2>
+					<PasswordStrengthMeter password={password} />
+					{formError && (
+						<p className="text-red-500 text-sm text-center mt-1">{formError}</p>
+					)}
+					{error && <p className='text-red-600 font-medium text-center mt-1'>{error}</p>}
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email"
-            className="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-          />
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Password"
-            className="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-          />
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 transition"
-          >
-            Login
-          </button>
-        </form>
-      </motion.div>
-    </div>
-  );
+					<motion.button
+						className='mt-5 w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white 
+						font-bold rounded-lg shadow-lg hover:from-blue-600
+						hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+						 focus:ring-offset-gray-900 transition duration-200'
+						whileHover={{ scale: 1.02 }}
+						whileTap={{ scale: 0.98 }}
+						type='submit'
+						disabled={isLoading }
+					>
+						{isLoading ? <Loader className=' animate-spin mx-auto' size={24} /> : "Sign Up"}
+					</motion.button>
+				</form>
+			</div>
+			<div className='px-8 py-4 bg-white bg-opacity-50 flex justify-center'>
+				<p className='text-sm text-gray-800'>
+					Already have an account?{" "}
+					<Link to={"/login"} className='text-blue-700 hover:underline'>
+						Login
+					</Link>
+				</p>
+			</div>
+		</motion.div>
+	);
 };
-
-export default Signin;
+export default SignUpPage;

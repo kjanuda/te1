@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import useAuthStore from '../store/useAuthStore';
+import { useAuthStore } from '../store/useAuthStore';
 import { Calendar, Clock, Users, BookOpen, CheckSquare, Settings, Bell, LogOut } from 'lucide-react';
 
 const Dashboard = () => {
