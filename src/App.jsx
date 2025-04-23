@@ -50,7 +50,7 @@ function App() {
   if (isCheckingAuth) return <Preloader />;
 
   return (
-    <div className="min-h-screen w-screen bg-gradient-to-br from-gray-100 via-blue-100 to-cyan-100 flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen w-screen bg-gradient-to-br from-gray-100 via-blue-200 to-cyan-200 flex items-center justify-center relative overflow-hidden">
 
 
       <Routes>

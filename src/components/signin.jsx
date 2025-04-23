@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 import { useAuthStore } from "../store/useAuthStore";
+import Waves from './ui/Waves';
+
 
 const SignUpPage = () => {
 	const [name, setName] = useState("");
@@ -44,11 +46,25 @@ const SignUpPage = () => {
 	};
 
 	return (
+		<div className="max-w-md w-full">
+			<Waves
+			lineColor="#fff"
+			backgroundColor="rgba(255, 255, 255, 0.2)"
+			waveSpeedX={0.02}
+			waveSpeedY={0.01}
+			waveAmpX={40}
+			waveAmpY={20}
+			friction={0.9}
+			tension={0.01}
+			maxCursorMove={120}
+			xGap={12}
+			yGap={36}
+			/>
 		<motion.div
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
-			className='max-w-md w-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl 
+			className=' bg-white bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl 
 			overflow-hidden'
 		>
 			<div className='p-8'>
@@ -128,6 +144,7 @@ const SignUpPage = () => {
 				</p>
 			</div>
 		</motion.div>
+		</div>
 	);
 };
 export default SignUpPage;
