@@ -1,81 +1,92 @@
-// src/components/Login.jsx
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Mail, Lock, Loader } from "lucide-react";
+import { Link } from "react-router-dom";
+import Input from "../components/Input";
+import { useAuthStore } from "../store/useAuthStore";
+import Waves from './ui/Waves';
 
-const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+const LoginPage = () => {
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+	const { login, isLoading, error } = useAuthStore();
 
-    if (username === 'admin' && password === 'admin@123') {
-      setSuccess(true);
-      setTimeout(() => {
-        onLogin();
-      }, 2000); // Show success screen for 3 sec
-    } else {
-      setError('❌ Invalid credentials. ');
-    }
-  };
+	const handleLogin = async (e) => {
+		e.preventDefault();
+		await login(email, password);
+	};
 
-  if (success) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-green-100">
-        <motion.div
-          className="text-4xl font-semibold text-green-700"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          ✅ Login Successful!
-        </motion.div>
-        <motion.div
-          className="mt-4 animate-spin h-12 w-12 rounded-full border-4 border-green-500 border-t-transparent"
-          transition={{ repeat: Infinity, duration: 1 }}
-        />
-      </div>
-    );
-  }
+	return (
+		<div className="max-w-md w-full">
+		<Waves
+			lineColor="#fff"
+			backgroundColor="rgba(255, 255, 255, 0.2)"
+			waveSpeedX={0.02}
+			waveSpeedY={0.01}
+			waveAmpX={40}
+			waveAmpY={20}
+			friction={0.9}
+			tension={0.01}
+			maxCursorMove={120}
+			xGap={12}
+			yGap={36}
+			/>
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.5 }}
+			className=' bg-white bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden'
+		>
+			<div className='p-8'>
+				<h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r from-blue-900 to-indigo-900 text-transparent bg-clip-text'>
+					Welcome Back
+				</h2>
 
-  return (
-    <div className="flex items-center justify-center h-screen bg-blue-100 px-4">
-      <motion.form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">Admin Login</h2>
+				<form onSubmit={handleLogin}>
+					<Input
+						icon={Mail}
+						type='email'
+						placeholder='Email Address'
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+					/>
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+					<Input
+						icon={Lock}
+						type='password'
+						placeholder='Password'
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+					/>
 
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
+					<div className='flex items-center mb-6'>
+						<Link to='/forgot-password' className='text-sm text-blue-700 hover:underline'>
+							Forgot password?
+						</Link>
+					</div>
+					{error && <p className='text-red-500 text-center font-semibold mb-2'>{error}</p>}
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition"
-        >
-          Login
-        </button>
-      </motion.form>
-    </div>
-  );
+					<motion.button
+						whileHover={{ scale: 1.02 }}
+						whileTap={{ scale: 0.98 }}
+						className="w-full py-3 px-4 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 disabled:bg-gray-400"						type='submit'
+						disabled={isLoading}
+					>
+						{isLoading ? <Loader className='w-6 h-6 animate-spin mx-auto' /> : "Login"}
+					</motion.button>
+				</form>
+			</div>
+			<div className='px-8 py-4 bg-white bg-opacity-50 flex justify-center'>
+				<p className='text-sm text-gray-800'>
+					Don't have an account?{" "}
+					<Link to='/signup' className='text-blue-700 hover:underline'>
+						Sign up
+					</Link>
+				</p>
+			</div>
+		</motion.div>
+		</div>
+	);
 };
-
-export default Login;
+export default LoginPage;
